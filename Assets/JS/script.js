@@ -60,6 +60,44 @@ function formatDate(dateString) {
     return date.toLocaleDateString(undefined, options);
 }
 
+// checkIfOverdue function
+// This function takes a due date string as an argument
+// It creates a new date object from the due date string
+// It then creates a new date object for the current date
+// It compares the due date with the current date
+// If the due date is less than the current date, the function returns true
+function checkIfOverdue(dueDate) {
+    const taskDate = new Date(dueDate);
+    const currentDate = new Date();
+    return taskDate < currentDate;
+}
+
+// checkTaskStatus function
+// This function takes a due date string as an argument
+// It creates a new date object from the due date string
+// It then creates a new date object for the current date
+// It compares the due date with the current date
+// If the due date is equal to the current date, the function returns "today"
+// If the due date is less than the current date, the function returns "overdue"
+// If the due date is greater than the current date, the function returns "future"
+
+function checkTaskStatus(dueDate) {
+    const taskDate = new Date(dueDate);
+    const currentDate = new Date();
+    
+    // Check if the task is due today
+    if (taskDate.toDateString() === currentDate.toDateString()) {
+        return "today";  // Task is due today
+    }
+    
+    // Check if the task is overdue
+    if (taskDate < currentDate) {
+        return "overdue";  // Task is overdue
+    }
+
+    return "future";  // Task is in the future
+}
+
 // This function adds a task to the task list
 // It creates a new task element and appends it to the task list
 // It also saves the tasks to local storage
@@ -108,8 +146,15 @@ function createTaskElement(text, completed = false, dueDate = "") {
 
     const dueDateSpan = document.createElement("span");
     dueDateSpan.classList.add("due-date");
+
     if (dueDate) {
         dueDateSpan.textContent = `Due: ${formatDate(dueDate)}`;
+        const taskStatus = checkTaskStatus(dueDate);
+        if (taskStatus === "overdue") {
+            li.classList.add("overdue");
+        } else if (taskStatus === "today") {
+            li.classList.add("due-today");
+        }
     }
 
     const deleteBtn = document.createElement("button");
