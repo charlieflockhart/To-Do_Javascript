@@ -275,9 +275,13 @@ function handleTaskClick(event) {
 // It hides or shows tasks based on the filter type
 // It also adds the active-filter class to the selected filter button
 function filterTasks(filter) {
+    // Remove active-filter class from all filter buttons
     document.querySelectorAll(".filter-buttons button").forEach(btn => btn.classList.remove("active-filter"));
+    
+    // Add active-filter class to the selected filter button
     document.getElementById(`${filter}Filter`).classList.add("active-filter");
 
+    // Filter tasks based on the selected filter
     document.querySelectorAll("#taskList li").forEach(li => {
         const isCompleted = li.querySelector("span").classList.contains("completed");
 
@@ -289,6 +293,9 @@ function filterTasks(filter) {
             li.style.display = "flex";
         }
     });
+
+    // Show notification for the selected filter
+    showNotification(`Showing ${filter} tasks`, "info");
 }
 
 // RECYCLE BIN FUNCTIONALITY
