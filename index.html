@@ -10,32 +10,32 @@
     <div id="notificationContainer"></div>
     <div class="container-wrapper">
         <div class="container-list">
-            <h1 alt="To-Do List">To-Do List</h1>
+            <h1>To-Do List</h1>
             <div class="input-container">
-                <input type="text" id="taskInput" placeholder="Enter a task" alt="Enter a task">
-                <input type="date" id="dueDateInput" alt="Enter a due date">
-                <button id="addTaskBtn" alt="Add Task Button">Add Task</button>
+                <input type="text" id="taskInput" placeholder="Enter a task">
+                <input type="date" id="dueDateInput">
+                <button id="addTaskBtn">Add Task</button>
             </div>
             <div class="filter-buttons">
-                <button id="allFilter" onclick="showNotification('Showing all tasks', 'info')" alt="All Button">All</button>
-                <button id="completedFilter" onclick="showNotification('Showing completed tasks', 'info')" alt="Completed Button">Completed</button>
-                <button id="pendingFilter" onclick="showNotification('Showing pending tasks', 'info')" alt="Pending Button">Pending</button>
-                <button id="dueTodayFilter" onclick="showNotification('Showing tasks due today', 'info')" alt="Due Today Button">Due Today</button>
-                <button id="overdueFilter" onclick="showNotification('Showing tasks overdue', 'info')" alt="Overdue Button">Overdue</button>
+                <button id="allFilter" onclick="showNotification('Showing all tasks', 'info')">All</button>
+                <button id="completedFilter" onclick="showNotification('Showing completed tasks', 'info')">Completed</button>
+                <button id="pendingFilter" onclick="showNotification('Showing pending tasks', 'info')">Pending</button>
+                <button id="dueTodayFilter" onclick="showNotification('Showing tasks due today', 'info')">Due Today</button>
+                <button id="overdueFilter" onclick="showNotification('Showing tasks overdue', 'info')">Overdue</button>
             </div>     
             <div>
                 <br>
-                <button id="deleteAllBtn" style="background-color: var(--delete-button-color);" alt="Delete All Button">Delete All</button>
+                <button id="deleteAllBtn" style="background-color: var(--delete-button-color);">Delete All</button>
             </div>   
             <ul id="taskList"></ul>
         </div>
         
         <div class="container-recycle-bin">
-            <h2 alt="Recycle Bin">Recycle Bin</h2>
+            <h2>Recycle Bin</h2>
             <h5>This clears on refresh of the webpage</h5>
             <ul id="recycleBin"></ul>
-            <button id="restoreAllBinBtn" alt="Restore All Button">Restore All</button>
-            <button id="clearBinBtn" alt="Empty Bin Button">Empty Bin</button>
+            <button id="restoreAllBinBtn">Restore All</button>
+            <button id="clearBinBtn">Empty Bin</button>
         </div>
     </div>
     
