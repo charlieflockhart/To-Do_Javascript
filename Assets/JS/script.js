@@ -13,6 +13,10 @@ const pendingFilter = document.getElementById("pendingFilter");
 // Notification element
 const notificationContainer = document.getElementById("notificationContainer");
 
+// Recycle bin elements
+const recycleBin = document.getElementById("recycleBin");
+const clearBinBtn = document.getElementById("clearBinBtn");
+
 // Add event listeners
 addTaskBtn.addEventListener("click", addTask);
 taskList.addEventListener("click", handleTaskClick);
@@ -116,12 +120,27 @@ function createTaskElement(text) {
 // The function also saves the tasks to local storage
 
 function removeTask(taskItem) {
-    taskItem.classList.add("removing"); // Apply fade-out animation
+    const taskText = taskItem.querySelector("span").textContent;
+    const isCompleted = taskItem.querySelector("span").classList.contains("completed");
 
+    // Create a recycle bin entry
+    const recycleItem = document.createElement("li");
+    recycleItem.innerHTML = `<span>${taskText}</span>`;
+    
+    const restoreBtn = document.createElement("button");
+    restoreBtn.textContent = "Restore";
+    restoreBtn.classList.add("restore-btn");
+    restoreBtn.addEventListener("click", () => restoreTask(taskText, isCompleted, recycleItem));
+
+    recycleItem.appendChild(restoreBtn);
+    recycleBin.appendChild(recycleItem);
+
+    // Remove from the main list
+    taskItem.classList.add("removing"); // Apply fade-out animation
     setTimeout(() => {
         taskItem.remove();
         saveTasks();
-        showNotification("Task deleted!", "error");
+        showNotification("Task deleted and moved to recycle bin!", "error");
     }, 300); // Match timeout to CSS animation duration
 }
 
@@ -272,3 +291,74 @@ function filterTasks(filter) {
     });
 }
 
+// RECYCLE BIN FUNCTIONALITY
+//
+//
+//
+//
+
+// restoreTask function
+// This function restores a task from the recycle bin
+// It creates a new task element and appends it to the task list
+// It then removes the task from the recycle bin
+// It also shows a notification to the user
+
+function restoreTask(text, completed, recycleItem) {
+    const taskItem = createTaskElement(text, completed);
+    taskList.appendChild(taskItem);
+
+    recycleItem.remove();
+    showNotification("Task restored!", "success");
+
+    saveTasks();
+    saveRecycleBin();
+}
+
+// saveRecycleBin function
+// This function saves the tasks in the recycle bin to local storage
+// It creates an array of tasks by iterating over the recycle bin
+// It then saves the tasks array to local storage
+
+function saveRecycleBin() {
+    const binTasks = [];
+    document.querySelectorAll("#recycleBin li span").forEach(span => {
+        binTasks.push(span.textContent);
+    });
+    localStorage.setItem("recycleBin", JSON.stringify(binTasks));
+}
+
+// loadRecycleBin function
+// This function loads the tasks from the recycle bin
+// It retrieves the tasks array from local storage
+// It then iterates over the tasks array and creates a task element for each task
+// It appends the task element to the task list
+
+function loadRecycleBin() {
+    const binTasks = JSON.parse(localStorage.getItem("recycleBin")) || [];
+    binTasks.forEach(text => {
+        const recycleItem = document.createElement("li");
+        recycleItem.innerHTML = `<span>${text}</span>`;
+        
+        const restoreBtn = document.createElement("button");
+        restoreBtn.textContent = "Restore";
+        restoreBtn.classList.add("restore-btn");
+        restoreBtn.addEventListener("click", () => restoreTask(text, false, recycleItem));
+
+        recycleItem.appendChild(restoreBtn);
+        recycleBin.appendChild(recycleItem);
+    });
+}
+
+// Clear recycle bin button
+// This event listener clears the recycle bin
+// It removes all tasks from the recycle bin
+// It also removes the tasks from local storage
+// It shows a notification to the user
+
+clearBinBtn.addEventListener("click", () => {
+    recycleBin.innerHTML = "";
+    localStorage.removeItem("recycleBin");
+    showNotification("Recycle bin emptied!", "error");
+});
+
+document.addEventListener("DOMContentLoaded", loadRecycleBin);
