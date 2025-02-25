@@ -9,6 +9,8 @@ const taskList = document.getElementById("taskList");
 const allFilter = document.getElementById("allFilter");
 const completedFilter = document.getElementById("completedFilter");
 const pendingFilter = document.getElementById("pendingFilter");
+const dueTodayFilter = document.getElementById("dueTodayFilter");
+const overdueFilter = document.getElementById("overdueFilter");
 
 // Notification element
 const notificationContainer = document.getElementById("notificationContainer");
@@ -28,6 +30,8 @@ taskList.addEventListener("click", handleTaskClick);
 allFilter.addEventListener("click", () => filterTasks("all"));
 completedFilter.addEventListener("click", () => filterTasks("completed"));
 pendingFilter.addEventListener("click", () => filterTasks("pending"));
+dueTodayFilter.addEventListener("click", () => filterTasks("dueToday"));
+overdueFilter.addEventListener("click", () => filterTasks("overdue"));
 
 // Show notification
 // This function creates a notification element and appends it to the notification container
@@ -359,10 +363,16 @@ function filterTasks(filter) {
     // Filter tasks based on the selected filter
     document.querySelectorAll("#taskList li").forEach(li => {
         const isCompleted = li.querySelector("span").classList.contains("completed");
+        const dueDateSpan = li.querySelector(".due-date");
+        const dueDate = dueDateSpan ? dueDateSpan.textContent.replace("Due: ", "") : "";
 
         if (filter === "completed" && !isCompleted) {
             li.style.display = "none";
         } else if (filter === "pending" && isCompleted) {
+            li.style.display = "none";
+        } else if (filter === "dueToday" && checkTaskStatus(dueDate) !== "today") {
+            li.style.display = "none";
+        } else if (filter === "overdue" && checkTaskStatus(dueDate) !== "overdue") {
             li.style.display = "none";
         } else {
             li.style.display = "flex";
