@@ -105,31 +105,66 @@ li {
     background: #ddd;
 }
 
-
-/* Fade-in animation for new tasks */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
+/* Animations */
+    /* Fade-in animation for new tasks */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+
+    .task-item {
+        animation: fadeIn 0.3s ease-in-out;
     }
-}
 
-.task-item {
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-/* Fade-out animation when deleting a task */
-@keyframes fadeOut {
-    to {
-        opacity: 0;
-        transform: translateX(20px);
+    /* Fade-out animation when deleting a task */
+    @keyframes fadeOut {
+        to {
+            opacity: 0;
+            transform: translateX(20px);
+        }
     }
+
+    .removing {
+        animation: fadeOut 0.3s ease-in-out forwards;
+    }
+
+
+#notificationContainer {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }
 
-.removing {
-    animation: fadeOut 0.3s ease-in-out forwards;
+.notification {
+    background: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    animation: fadeInOut 3s ease-in-out forwards;
 }
+
+/* Different colors for different actions */
+.notification.error { background: #dc3545; } /* Red for delete */
+.notification.info { background: #007bff; } /* Blue for complete */
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-10px); }
+}
+    
