@@ -240,6 +240,7 @@ function deleteAllTasks() {
     tasks.forEach(task => removeTask(task));
     showNotification("All tasks deleted and moved to recycle bin!", "error");
     saveTasks();
+    saveRecycleBin();
 }
 
 
@@ -277,6 +278,7 @@ function removeTask(taskItem) {
         if (!deleteAllTasks.triggered) {
             if (!deleteAllTasks.triggered) {
                 showNotification("Task deleted and moved to recycle bin!", "error");
+                saveRecycleBin();
             }
         }
     }, 300); // Match timeout to CSS animation duration
@@ -479,8 +481,13 @@ function restoreTask(text, completed, recycleItem) {
 
 function saveRecycleBin() {
     const binTasks = [];
-    document.querySelectorAll("#recycleBin li span").forEach(span => {
-        binTasks.push(span.textContent);
+    document.querySelectorAll("#recycleBin li").forEach(li => {
+        const span = li.querySelector("span");
+        const dueDate = li.getAttribute("data-due-date") || "";
+        binTasks.push({
+            text: span.textContent,
+            dueDate: dueDate
+        });
     });
     localStorage.setItem("recycleBin", JSON.stringify(binTasks));
 }
@@ -493,14 +500,15 @@ function saveRecycleBin() {
 
 function loadRecycleBin() {
     const binTasks = JSON.parse(localStorage.getItem("recycleBin")) || [];
-    binTasks.forEach(text => {
+    binTasks.forEach(task => {
         const recycleItem = document.createElement("li");
-        recycleItem.innerHTML = `<span>${text}</span>`;
-        
+        recycleItem.innerHTML = `<span>${task.text}</span>`;
+        recycleItem.setAttribute("data-due-date", task.dueDate);
+
         const restoreBtn = document.createElement("button");
         restoreBtn.textContent = "Restore";
         restoreBtn.classList.add("restore-btn");
-        restoreBtn.addEventListener("click", () => restoreTask(text, false, recycleItem));
+        restoreBtn.addEventListener("click", () => restoreTask(task.text, false, recycleItem));
 
         recycleItem.appendChild(restoreBtn);
         recycleBin.appendChild(recycleItem);
