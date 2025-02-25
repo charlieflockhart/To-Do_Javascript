@@ -293,9 +293,6 @@ function filterTasks(filter) {
             li.style.display = "flex";
         }
     });
-
-    // Show notification for the selected filter
-    showNotification(`Showing ${filter} tasks`, "info");
 }
 
 // RECYCLE BIN FUNCTIONALITY

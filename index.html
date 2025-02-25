@@ -15,9 +15,9 @@
             <button id="addTaskBtn">Add Task</button>
         </div>
         <div class="filter-buttons">
-            <button id="allFilter">All</button>
-            <button id="completedFilter">Completed</button>
-            <button id="pendingFilter">Pending</button>
+            <button id="allFilter" onclick="showNotification('Showing all tasks', 'info')">All</button>
+            <button id="completedFilter" onclick="showNotification('Showing completed tasks', 'info')">Completed</button>
+            <button id="pendingFilter" onclick="showNotification('Showing pending tasks', 'info')">Pending</button>
         </div>        
         <ul id="taskList"></ul>
 
