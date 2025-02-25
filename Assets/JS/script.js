@@ -66,8 +66,52 @@ function createTaskElement(text) {
 
     li.appendChild(span);
     li.appendChild(deleteBtn);
+
+    // Enable dragging
+    li.setAttribute("draggable", "true");
+    li.classList.add("draggable");
+
+    // Enable dragging
+    li.addEventListener("dragstart", () => li.classList.add("dragging"));
+    li.addEventListener("dragend", () => {
+        li.classList.remove("dragging");
+        saveTasks();
+    });
+
     return li;
 }
+
+// Drag & Drop functionality
+// This function allows the user to drag and drop tasks
+// It adds a dragover event listener to the task list
+// It gets the dragging element and the siblings of the dragging element
+// It then finds the closest sibling to the dragging element
+// If the closest sibling is found, it inserts the dragging element before the closest sibling
+// If the closest sibling is not found, it appends the dragging element to the task list
+
+taskList.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    const draggingElement = document.querySelector(".dragging");
+    const siblings = [...taskList.querySelectorAll(".draggable:not(.dragging)")];
+
+    let closest = null;
+    let closestOffset = Number.NEGATIVE_INFINITY;
+
+    siblings.forEach((sibling) => {
+        const box = sibling.getBoundingClientRect();
+        const offset = e.clientY - box.top - box.height / 2;
+        if (offset < 0 && offset > closestOffset) {
+            closestOffset = offset;
+            closest = sibling;
+        }
+    });
+
+    if (closest) {
+        taskList.insertBefore(draggingElement, closest);
+    } else {
+        taskList.appendChild(draggingElement);
+    }
+});
 
 // This function allows the user to edit a task
 // It replaces the span element with an input element
