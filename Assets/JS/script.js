@@ -18,6 +18,7 @@ const notificationContainer = document.getElementById("notificationContainer");
 // Recycle bin elements
 const recycleBin = document.getElementById("recycleBin");
 const clearBinBtn = document.getElementById("clearBinBtn");
+const restoreAllBinBtn = document.getElementById("restoreAllBinBtn");
 
 // Date Input elements
 const dueDateInput = document.getElementById("dueDateInput");
@@ -260,7 +261,10 @@ function removeTask(taskItem) {
     const restoreBtn = document.createElement("button");
     restoreBtn.textContent = "Restore";
     restoreBtn.classList.add("restore-btn");
-    restoreBtn.addEventListener("click", () => restoreTask(taskText, isCompleted, recycleItem));
+    restoreBtn.addEventListener("click", () => {
+        restoreTask(taskText, isCompleted, recycleItem);
+        showNotification("Task restored!", "success");
+    });
 
     recycleItem.appendChild(restoreBtn);
     recycleBin.appendChild(recycleItem);
@@ -462,7 +466,6 @@ function restoreTask(text, completed, recycleItem) {
     taskList.appendChild(taskItem);
 
     recycleItem.remove();
-    showNotification("Task restored!", "success");
 
     saveTasks();
     saveRecycleBin();
@@ -514,6 +517,15 @@ clearBinBtn.addEventListener("click", () => {
     recycleBin.innerHTML = "";
     localStorage.removeItem("recycleBin");
     showNotification("Recycle bin emptied!", "error");
+});
+
+restoreAllBinBtn.addEventListener("click", () => {
+    const recycleItems = [...recycleBin.children];
+    recycleItems.forEach(item => {
+        const text = item.querySelector("span").textContent;
+        restoreTask(text, false, item);
+    });
+    showNotification("All Tasks restored!", "success");
 });
 
 document.addEventListener("DOMContentLoaded", loadRecycleBin);
