@@ -1,3 +1,9 @@
+:root
+{
+    --delete-button-color: #dc3545;
+    --notifitcation-error-color: #dc3545;
+}
+
 body {
     font-family: Arial, sans-serif;
     display: flex;
@@ -171,7 +177,7 @@ li {
 }
 
 /* Different colors for different actions */
-.notification.error { background: #dc3545; } /* Red for delete */
+.notification.error { background: var(--notifitcation-error-color); } /* Red for delete */
 .notification.info { background: #007bff; } /* Blue for complete */
 
 @keyframes fadeInOut {
@@ -212,7 +218,7 @@ li {
 }
 
 #clearBinBtn {
-    background: #dc3545;
+    background: var(--delete-button-color);
     color: white;
     border: none;
     padding: 8px 12px;

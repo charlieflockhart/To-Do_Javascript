@@ -21,7 +21,13 @@
             <button id="pendingFilter" onclick="showNotification('Showing pending tasks', 'info')">Pending</button>
             <button id="dueTodayFilter" onclick="showNotification('Showing tasks due today', 'info')">Due Today</button>
             <button id="overdueFilter" onclick="showNotification('Showing tasks overdue', 'info')">Overdue</button>
-        </div>        
+        </div>     
+        <div>
+            <br>
+            <button id="deleteAllBtn" style="background-color: var(--delete-button-color);">Delete All</button>
+        </div>   
+        
+
         <ul id="taskList"></ul>
 
         <h2>Recycle Bin</h2>

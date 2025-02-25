@@ -22,9 +22,16 @@ const clearBinBtn = document.getElementById("clearBinBtn");
 // Date Input elements
 const dueDateInput = document.getElementById("dueDateInput");
 
+// Delete all button element
+const deleteAllBtn = document.getElementById("deleteAllBtn");
+
 // Add event listeners
 addTaskBtn.addEventListener("click", addTask);
 taskList.addEventListener("click", handleTaskClick);
+
+
+// Delete all tasks button event listener
+deleteAllBtn.addEventListener("click", deleteAllTasks);
 
 // Filter event listeners
 allFilter.addEventListener("click", () => filterTasks("all"));
@@ -222,6 +229,18 @@ function createTaskElement(text, completed = false, dueDate = "") {
     return li;
 }
 
+// This function deletes all tasks from the task list
+// It loops through all tasks and moves them to the recycle bin
+// It also saves the tasks to local storage and shows a notification to the user
+
+function deleteAllTasks() {
+    deleteAllTasks.triggered = true;
+    const tasks = [...taskList.children];
+    tasks.forEach(task => removeTask(task));
+    showNotification("All tasks deleted and moved to recycle bin!", "error");
+    saveTasks();
+}
+
 
 // This function removes a task from the task list
 // It adds a removing class to the task
@@ -251,7 +270,11 @@ function removeTask(taskItem) {
     setTimeout(() => {
         taskItem.remove();
         saveTasks();
-        showNotification("Task deleted and moved to recycle bin!", "error");
+        if (!deleteAllTasks.triggered) {
+            if (!deleteAllTasks.triggered) {
+                showNotification("Task deleted and moved to recycle bin!", "error");
+            }
+        }
     }, 300); // Match timeout to CSS animation duration
 }
 
@@ -385,6 +408,7 @@ function handleTaskClick(event) {
     if (event.target.classList.contains("delete-btn")) {
         // Remove task
         removeTask(event.target.parentElement);
+        showNotification("Task deleted and moved to recycle bin!", "error");
     }
 }
 
