@@ -35,7 +35,12 @@ function addTask() {
     taskInput.value = "";
 }
 
-
+// Add task on Enter key press
+taskInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+        addTask();
+    }
+});
 
 // This function creates a new task element
 // It creates a new li element and appends a span and a delete button to it
@@ -211,3 +216,4 @@ function filterTasks(filter) {
         }
     });
 }
+
