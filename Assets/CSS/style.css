@@ -167,4 +167,47 @@ li {
     90% { opacity: 1; }
     100% { opacity: 0; transform: translateY(-10px); }
 }
-    
+
+
+#recycleBin {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+#recycleBin li {
+    display: flex;
+    justify-content: space-between;
+    background: #f8d7da;
+    padding: 8px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.restore-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.restore-btn:hover {
+    background: #218838;
+}
+
+#clearBinBtn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+#clearBinBtn:hover {
+    background: #c82333;
+}
