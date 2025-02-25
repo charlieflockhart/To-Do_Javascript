@@ -95,3 +95,12 @@ li {
 .filter-buttons button:hover {
     background: #0056b3;
 }
+
+.draggable {
+    cursor: grab;
+}
+
+.dragging {
+    opacity: 0.5;
+    background: #ddd;
+}
