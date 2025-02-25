@@ -102,6 +102,39 @@ function checkTaskStatus(dueDate) {
     return "future";  // Task is in the future
 }
 
+// sortTasksByDate function
+// This function sorts the tasks by due date
+// It gets all the tasks from the task list
+// It filters out tasks with a due date and tasks without a due date
+// It sorts the tasks with a due date based on the date value
+// It combines the sorted tasks with the tasks without a due date
+// It then clears the task list and appends the sorted tasks
+
+function sortTasksByDate() {
+    const tasks = [...taskList.children];
+    
+    // Filter out tasks with a due date and tasks without one
+    const tasksWithDate = tasks.filter(task => {
+        const dueDateText = task.querySelector('.due-date').textContent.trim();
+        return dueDateText !== '' && !isNaN(new Date(dueDateText.replace('Due: ', '').trim()).getTime());
+    });
+    const tasksWithoutDate = tasks.filter(task => task.querySelector('.due-date').textContent.trim() === '');
+    
+    // Sort tasks with a due date based on the date value
+    tasksWithDate.sort((a, b) => {
+        const dateA = new Date(a.querySelector('.due-date').textContent.replace('Due: ', '').trim());
+        const dateB = new Date(b.querySelector('.due-date').textContent.replace('Due: ', '').trim());
+        return dateA - dateB;
+    });
+    
+    // Combine sorted tasks with the tasks without a date at the bottom
+    const sortedTasks = [...tasksWithDate, ...tasksWithoutDate];
+    
+    // Clear the task list and append the sorted tasks
+    taskList.innerHTML = '';
+    sortedTasks.forEach(task => taskList.appendChild(task));
+}
+
 // This function adds a task to the task list
 // It creates a new task element and appends it to the task list
 // It also saves the tasks to local storage
@@ -120,6 +153,8 @@ function addTask() {
 
     taskInput.value = "";
     dueDateInput.value = ""; // Clear the date input
+
+    sortTasksByDate(); // Sort tasks after adding
 }
 
 // Add task on Enter key press
@@ -196,11 +231,13 @@ function createTaskElement(text, completed = false, dueDate = "") {
 function removeTask(taskItem) {
     const taskText = taskItem.querySelector("span").textContent;
     const isCompleted = taskItem.querySelector("span").classList.contains("completed");
+    const dueDate = taskItem.querySelector(".due-date").textContent.replace("Due: ", "");
 
     // Create a recycle bin entry
     const recycleItem = document.createElement("li");
     recycleItem.innerHTML = `<span>${taskText}</span>`;
-    
+    recycleItem.setAttribute("data-due-date", dueDate);
+
     const restoreBtn = document.createElement("button");
     restoreBtn.textContent = "Restore";
     restoreBtn.classList.add("restore-btn");
@@ -318,6 +355,8 @@ function loadTasks() {
         const taskItem = createTaskElement(task.text, task.completed, task.dueDate);
         taskList.appendChild(taskItem);
     });
+
+    sortTasksByDate();  // Sort tasks after loading them
 }
 
 // This function completes a task
@@ -393,7 +432,9 @@ function filterTasks(filter) {
 // It also shows a notification to the user
 
 function restoreTask(text, completed, recycleItem) {
-    const taskItem = createTaskElement(text, completed);
+    const dueDate = recycleItem.getAttribute("data-due-date") || "";
+    const taskItem = createTaskElement(text, completed, dueDate);
+    taskItem.querySelector(".due-date").textContent = dueDate ? `Due: ${formatDate(dueDate)}` : "";
     taskList.appendChild(taskItem);
 
     recycleItem.remove();
@@ -401,6 +442,7 @@ function restoreTask(text, completed, recycleItem) {
 
     saveTasks();
     saveRecycleBin();
+    sortTasksByDate(); // Sort tasks after restoring
 }
 
 // saveRecycleBin function
