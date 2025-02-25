@@ -72,18 +72,6 @@ function formatDate(dateString) {
     return date.toLocaleDateString(undefined, options);
 }
 
-// checkIfOverdue function
-// This function takes a due date string as an argument
-// It creates a new date object from the due date string
-// It then creates a new date object for the current date
-// It compares the due date with the current date
-// If the due date is less than the current date, the function returns true
-function checkIfOverdue(dueDate) {
-    const taskDate = new Date(dueDate);
-    const currentDate = new Date();
-    return taskDate < currentDate;
-}
-
 // checkTaskStatus function
 // This function takes a due date string as an argument
 // It creates a new date object from the due date string
@@ -294,9 +282,9 @@ function createTaskElement(text, completed = false, dueDate = "") {
 
 function deleteAllTasks() {
     deleteAllTasks.triggered = true;
-    const tasks = [...taskList.children];
+    const tasks = [...taskList.children].filter(task => task.style.display !== "none");
     tasks.forEach(task => removeTask(task));
-    showNotification("All tasks deleted and moved to recycle bin!", "error");
+    showNotification("All visible tasks deleted and moved to recycle bin!", "error");
     saveTasks();
     saveRecycleBin();
 }
