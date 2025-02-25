@@ -51,6 +51,9 @@ taskInput.addEventListener("keypress", (e) => {
 
 function createTaskElement(text) {
     const li = document.createElement("li");
+    
+    // Add animation class
+    li.classList.add("task-item"); 
 
     const span = document.createElement("span");
     span.textContent = text;
@@ -64,10 +67,7 @@ function createTaskElement(text) {
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "X";
     deleteBtn.classList.add("delete-btn");
-    deleteBtn.addEventListener("click", () => {
-        li.remove();
-        saveTasks();
-    });
+    deleteBtn.addEventListener("click", () => removeTask(li));
 
     li.appendChild(span);
     li.appendChild(deleteBtn);
@@ -84,6 +84,21 @@ function createTaskElement(text) {
     });
 
     return li;
+}
+
+
+// This function removes a task from the task list
+// It adds a removing class to the task
+// It then removes the task from the task list after the fade-out animation
+// The function also saves the tasks to local storage
+
+function removeTask(taskItem) {
+    taskItem.classList.add("removing"); // Apply fade-out animation
+
+    setTimeout(() => {
+        taskItem.remove();
+        saveTasks();
+    }, 300); // Match timeout to CSS animation duration
 }
 
 // Drag & Drop functionality
@@ -191,8 +206,8 @@ function loadTasks() {
 
 function handleTaskClick(event) {
     if (event.target.classList.contains("delete-btn")) {
-        event.target.parentElement.remove();
-        saveTasks();
+        // Remove task
+        removeTask(event.target.parentElement);
     }
 }
 
