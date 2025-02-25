@@ -143,6 +143,62 @@ function sortTasksByDate() {
     sortedTasks.forEach(task => taskList.appendChild(task));
 }
 
+// editDueDate function
+// This function allows the user to edit the due date of a task
+// It replaces the span element with an input element
+// The input element contains the due date and has a focus event listener
+// The input element also has blur and keypress event listeners to save the edited due date
+// The function saves the edited due date to local storage
+
+function editDueDate(dueDateSpan, taskItem) {
+    const oldDate = dueDateSpan.textContent.replace("Due: ", "").trim();
+    const input = document.createElement("input");
+    input.type = "date";
+    input.value = oldDate ? new Date(oldDate).toISOString().split("T")[0] : "";
+    input.classList.add("edit-date-input");
+
+    dueDateSpan.replaceWith(input);
+    input.focus();
+
+    input.addEventListener("blur", () => saveDueDate(input, dueDateSpan, taskItem));
+    input.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") saveDueDate(input, dueDateSpan, taskItem);
+    });
+}
+
+// saveDueDate function
+// This function saves the edited due date
+// It gets the new date from the input element
+// If the new date is empty, it returns
+// It then replaces the input element with the new date
+// The function then saves the tasks to local storage
+
+function saveDueDate(input, dueDateSpan, taskItem) {
+    const newDate = input.value;
+    if (!newDate) return;
+
+    dueDateSpan.textContent = `Due: ${formatDate(newDate)}`;
+    input.replaceWith(dueDateSpan);
+
+    updateTaskStatus(taskItem, newDate);
+    saveTasks();
+    sortTasksByDate();
+}
+
+// This function updates the task status based on the due date
+// It removes the overdue and due-today classes from the task element
+// It then checks the task status and adds the appropriate class to the task element
+function updateTaskStatus(taskItem, dueDate) {
+    taskItem.classList.remove("overdue", "due-today");
+
+    const status = checkTaskStatus(dueDate);
+    if (status === "overdue") {
+        taskItem.classList.add("overdue");
+    } else if (status === "today") {
+        taskItem.classList.add("due-today");
+    }
+}
+
 // This function adds a task to the task list
 // It creates a new task element and appends it to the task list
 // It also saves the tasks to local storage
@@ -193,6 +249,8 @@ function createTaskElement(text, completed = false, dueDate = "") {
 
     const dueDateSpan = document.createElement("span");
     dueDateSpan.classList.add("due-date");
+    dueDateSpan.textContent = dueDate ? `Due: ${formatDate(dueDate)}` : "";
+    dueDateSpan.addEventListener("dblclick", () => editDueDate(dueDateSpan, li));
 
     if (dueDate) {
         dueDateSpan.textContent = `Due: ${formatDate(dueDate)}`;
