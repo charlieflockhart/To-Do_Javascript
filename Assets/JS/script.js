@@ -17,6 +17,9 @@ const notificationContainer = document.getElementById("notificationContainer");
 const recycleBin = document.getElementById("recycleBin");
 const clearBinBtn = document.getElementById("clearBinBtn");
 
+// Date Input elements
+const dueDateInput = document.getElementById("dueDateInput");
+
 // Add event listeners
 addTaskBtn.addEventListener("click", addTask);
 taskList.addEventListener("click", handleTaskClick);
@@ -45,21 +48,36 @@ function showNotification(message, type = "success") {
     }, 3000); // Notification disappears after 3 seconds
 }
 
+// formatDate function
+// This function takes a date string as an argument
+// It creates a new date object from the date string
+// It then formats the date object to a short date format
+// The function returns the formatted date string
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return date.toLocaleDateString(undefined, options);
+}
+
 // This function adds a task to the task list
 // It creates a new task element and appends it to the task list
 // It also saves the tasks to local storage
 
 function addTask() {
     const taskText = taskInput.value.trim();
+    const dueDate = dueDateInput.value.trim(); // Get the due date
+
     if (taskText === "") return;
 
-    const taskItem = createTaskElement(taskText);
+    const taskItem = createTaskElement(taskText, false, dueDate);
     taskList.appendChild(taskItem);
     saveTasks();
 
     showNotification("Task added!", "success");
 
     taskInput.value = "";
+    dueDateInput.value = ""; // Clear the date input
 }
 
 // Add task on Enter key press
@@ -76,7 +94,7 @@ taskInput.addEventListener("keypress", (e) => {
 // The delete button has a click event listener that removes the task from the task list
 // The function returns the li element
 
-function createTaskElement(text) {
+function createTaskElement(text, completed = false, dueDate = "") {
     const li = document.createElement("li");
     
     // Add animation class
@@ -88,6 +106,12 @@ function createTaskElement(text) {
 
     span.addEventListener("dblclick", () => editTask(span)); // Double-click to edit
 
+    const dueDateSpan = document.createElement("span");
+    dueDateSpan.classList.add("due-date");
+    if (dueDate) {
+        dueDateSpan.textContent = `Due: ${formatDate(dueDate)}`;
+    }
+
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "X";
     deleteBtn.classList.add("delete-btn");
@@ -97,6 +121,7 @@ function createTaskElement(text) {
     });
 
     li.appendChild(span);
+    li.appendChild(dueDateSpan);
     li.appendChild(deleteBtn);
 
     // Enable dragging
@@ -219,8 +244,14 @@ function saveEdit(input, span) {
 
 function saveTasks() {
     const tasks = [];
-    document.querySelectorAll("#taskList li span").forEach(span => {
-        tasks.push({ text: span.textContent, completed: span.classList.contains("completed") });
+    document.querySelectorAll("#taskList li").forEach(li => {
+        const span = li.querySelector("span");
+        const dueDateSpan = li.querySelector(".due-date");
+        tasks.push({
+            text: span.textContent,
+            completed: span.classList.contains("completed"),
+            dueDate: dueDateSpan ? dueDateSpan.textContent.replace("Due: ", "") : "",
+        });
     });
     localStorage.setItem("tasks", JSON.stringify(tasks));
 }
@@ -235,8 +266,7 @@ function saveTasks() {
 function loadTasks() {
     const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
     tasks.forEach(task => {
-        const taskItem = createTaskElement(task.text);
-        if (task.completed) taskItem.querySelector("span").classList.add("completed");
+        const taskItem = createTaskElement(task.text, task.completed, task.dueDate);
         taskList.appendChild(taskItem);
     });
 }
