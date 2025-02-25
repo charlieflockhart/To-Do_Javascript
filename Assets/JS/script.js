@@ -10,6 +10,9 @@ const allFilter = document.getElementById("allFilter");
 const completedFilter = document.getElementById("completedFilter");
 const pendingFilter = document.getElementById("pendingFilter");
 
+// Notification element
+const notificationContainer = document.getElementById("notificationContainer");
+
 // Add event listeners
 addTaskBtn.addEventListener("click", addTask);
 taskList.addEventListener("click", handleTaskClick);
@@ -19,6 +22,24 @@ allFilter.addEventListener("click", () => filterTasks("all"));
 completedFilter.addEventListener("click", () => filterTasks("completed"));
 pendingFilter.addEventListener("click", () => filterTasks("pending"));
 
+// Show notification
+// This function creates a notification element and appends it to the notification container
+// It then removes the notification after 3 seconds
+// The function takes a message and a type as arguments
+// The type argument is optional and defaults to "success"
+// The type argument is used to apply different styles to the notification
+
+function showNotification(message, type = "success") {
+    const notification = document.createElement("div");
+    notification.classList.add("notification", type);
+    notification.textContent = message;
+
+    notificationContainer.appendChild(notification);
+
+    setTimeout(() => {
+        notification.remove();
+    }, 3000); // Notification disappears after 3 seconds
+}
 
 // This function adds a task to the task list
 // It creates a new task element and appends it to the task list
@@ -31,6 +52,8 @@ function addTask() {
     const taskItem = createTaskElement(taskText);
     taskList.appendChild(taskItem);
     saveTasks();
+
+    showNotification("Task added!", "success");
 
     taskInput.value = "";
 }
@@ -57,17 +80,17 @@ function createTaskElement(text) {
 
     const span = document.createElement("span");
     span.textContent = text;
-    span.addEventListener("click", () => {
-        span.classList.toggle("completed");
-        saveTasks();
-    });
+    span.addEventListener("click", () => completeTask(span));// Click to complete
 
     span.addEventListener("dblclick", () => editTask(span)); // Double-click to edit
 
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "X";
     deleteBtn.classList.add("delete-btn");
-    deleteBtn.addEventListener("click", () => removeTask(li));
+    deleteBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        removeTask(li);
+    });
 
     li.appendChild(span);
     li.appendChild(deleteBtn);
@@ -98,6 +121,7 @@ function removeTask(taskItem) {
     setTimeout(() => {
         taskItem.remove();
         saveTasks();
+        showNotification("Task deleted!", "error");
     }, 300); // Match timeout to CSS animation duration
 }
 
@@ -198,7 +222,23 @@ function loadTasks() {
     });
 }
 
+// This function completes a task
+// It toggles the completed class on the task element
+// It then saves the tasks to local storage
+// It also shows a notification to the user
 
+function completeTask(span) {
+    span.classList.toggle("completed");
+    saveTasks();
+    
+    if (span.classList.contains("completed")) {
+        showNotification("Task completed!", "info");
+    } else {
+        showNotification("Task marked as pending!", "info");
+    }
+
+    filterTasks(document.querySelector(".active-filter")?.id || "all");
+}
 
 // This function handles the click events on the task list
 // If the delete button is clicked, it removes the task from the task list
