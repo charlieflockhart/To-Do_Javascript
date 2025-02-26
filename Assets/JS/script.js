@@ -195,7 +195,10 @@ function addTask() {
     const taskText = taskInput.value.trim();
     const dueDate = dueDateInput.value.trim(); // Get the due date
 
-    if (taskText === "") return;
+    if (taskText === "") {
+        showNotification("Please enter a valid task name", "error");
+        return;
+    }
 
     const taskItem = createTaskElement(taskText, false, dueDate);
     taskList.appendChild(taskItem);
@@ -240,6 +243,7 @@ function createTaskElement(text, completed = false, dueDate = "") {
     dueDateSpan.textContent = dueDate ? `Due: ${formatDate(dueDate)}` : "";
     dueDateSpan.addEventListener("dblclick", () => editDueDate(dueDateSpan, li));
 
+    
     if (dueDate) {
         dueDateSpan.textContent = `Due: ${formatDate(dueDate)}`;
         const taskStatus = checkTaskStatus(dueDate);
@@ -583,3 +587,64 @@ restoreAllBinBtn.addEventListener("click", () => {
 });
 
 document.addEventListener("DOMContentLoaded", loadRecycleBin);
+
+
+const buttonContainer = document.getElementById("buttonContainer");
+
+// Create Import button
+const loadTasksBtn = document.createElement("button");
+loadTasksBtn.textContent = "Import Tasks";
+loadTasksBtn.id = "loadTasksBtn";
+buttonContainer.appendChild(loadTasksBtn);
+
+// Add gap between buttons
+loadTasksBtn.style.marginRight = "10px";
+
+// Create Export button
+const saveTasksBtn = document.createElement("button");
+saveTasksBtn.textContent = "Export Tasks";
+saveTasksBtn.id = "saveTasksBtn";
+buttonContainer.appendChild(saveTasksBtn);
+
+// Create hidden file input
+const fileInput = document.createElement("input");
+fileInput.type = "file";
+fileInput.id = "fileInput";
+fileInput.style.display = "none";
+buttonContainer.appendChild(fileInput);
+
+
+// Event listener for saving tasks to a file
+saveTasksBtn.addEventListener("click", () => {
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    const date = new Date();
+    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}_${date.getHours().toString().padStart(2, '0')}-${date.getMinutes().toString().padStart(2, '0')}`;
+    const blob = new Blob([JSON.stringify(tasks, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `To_Do_Tasks_Exported_${formattedDate}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+});
+
+// Event listener for loading tasks from a file
+loadTasksBtn.addEventListener("click", () => {
+    fileInput.click();
+    fileInput.addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const tasks = JSON.parse(e.target.result);
+                localStorage.setItem("tasks", JSON.stringify(tasks));
+                location.reload(); // Refresh the page
+            } catch (error) {
+                showNotification("Invalid file format!", "error");
+            }
+        };
+        reader.readAsText(file);
+    });
+});
