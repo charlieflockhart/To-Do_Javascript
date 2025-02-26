@@ -1,5 +1,5 @@
 # To Do List - Broaden JavaScript Knowledge 
-![To Do List](Readme_Files/Images/To-Do-List-Website.png)
+![To Do List](Readme_Files/Images/To-Do-List-Website.jpg)
 - Deployed project can be found [here](https://charlieflockhart.github.io/To-Do_Javascript/).
 
 ## About This Project  
