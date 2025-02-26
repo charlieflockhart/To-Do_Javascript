@@ -21,6 +21,7 @@ body {
 }
 
 .container-list,
+.container-import-export,
 .container-recycle-bin {
     background: white;
     padding: 20px;
